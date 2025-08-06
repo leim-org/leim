@@ -173,7 +173,7 @@ org.gradle.caching=true
 ## 📝 版本信息
 
 - **Android Gradle Plugin**: 8.7.2
-- **Gradle**: 8.7
+- **Gradle**: 8.9
 - **Kotlin**: 1.9.10
 - **Target SDK**: 34
 - **Min SDK**: 24
