@@ -54,14 +54,14 @@ check_gradle() {
 # 清理项目
 clean_project() {
     log_info "清理项目..."
-    ./gradlew clean
+    sh gradlew clean
     log_success "项目清理完成"
 }
 
 # 构建Debug版本
 build_debug() {
     log_info "构建Debug版本..."
-    ./gradlew assembleDebug
+    sh gradlew assembleDebug
     if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
         log_success "Debug APK构建成功"
     else
@@ -73,7 +73,7 @@ build_debug() {
 # 构建Release版本
 build_release() {
     log_info "构建Release版本..."
-    ./gradlew assembleRelease
+    sh gradlew assembleRelease
     if [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
         log_success "Release APK构建成功"
     else
@@ -85,14 +85,14 @@ build_release() {
 # 运行测试
 run_tests() {
     log_info "运行单元测试..."
-    ./gradlew test
+    sh gradlew test
     log_success "单元测试完成"
 }
 
 # 检查代码质量
 check_lint() {
     log_info "运行代码检查..."
-    ./gradlew lint
+    sh gradlew lint
     log_success "代码检查完成"
 }
 
