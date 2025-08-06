@@ -37,13 +37,31 @@ check_java() {
         exit 1
     fi
     
-    JAVA_VERSION=$(java -version 2>&1 | head -n1 | cut -d'"' -f2 | cut -d'.' -f1)
-    if [ "$JAVA_VERSION" -lt 17 ]; then
+    # 获取Java版本信息
+    JAVA_VERSION_OUTPUT=$(java -version 2>&1 | head -n1)
+    log_info "检测到Java版本: $JAVA_VERSION_OUTPUT"
+    
+    # 提取主版本号 (支持Java 8+的版本格式)
+    JAVA_VERSION=$(echo "$JAVA_VERSION_OUTPUT" | sed -n 's/.*"\([0-9]*\)\..*/\1/p')
+    
+    # 如果提取失败，尝试另一种格式 (Java 9+)
+    if [ -z "$JAVA_VERSION" ]; then
+        JAVA_VERSION=$(echo "$JAVA_VERSION_OUTPUT" | sed -n 's/.*"\([0-9]*\)\..*"/\1/p')
+    fi
+    
+    # 如果还是失败，尝试直接提取数字
+    if [ -z "$JAVA_VERSION" ]; then
+        JAVA_VERSION=$(echo "$JAVA_VERSION_OUTPUT" | grep -oE '[0-9]+' | head -n1)
+    fi
+    
+    log_info "解析的Java主版本号: $JAVA_VERSION"
+    
+    if [ -z "$JAVA_VERSION" ] || [ "$JAVA_VERSION" -lt 17 ]; then
         log_error "需要JDK 17或更高版本，当前版本: $JAVA_VERSION"
         exit 1
     fi
     
-    log_success "Java环境检查通过: $(java -version 2>&1 | head -n1)"
+    log_success "Java环境检查通过: $JAVA_VERSION_OUTPUT"
 }
 
 # 检查Gradle环境
