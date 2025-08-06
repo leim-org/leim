@@ -3,14 +3,14 @@
 # Leim Android项目构建脚本
 # 适用于Linux环境 (Ubuntu/Debian)
 
-set -e  # 遇到错误时退出
+set -e
 
 # 颜色定义
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 # 日志函数
 log_info() {
@@ -29,14 +29,14 @@ log_error() {
     printf "${RED}[ERROR]${NC} %s\n" "$1"
 }
 
-# 检查Java环境 (简化版本)
+# 检查Java环境
 check_java() {
     log_info "检查Java环境..."
     if command -v java &> /dev/null; then
         JAVA_VERSION_OUTPUT=$(java -version 2>&1 | head -n1)
         log_success "Java环境可用: $JAVA_VERSION_OUTPUT"
     else
-        log_warning "未检测到Java，但将继续构建（Gradle会自动处理）"
+        log_warning "未检测到Java，但将继续构建"
     fi
 }
 
@@ -47,8 +47,6 @@ check_gradle() {
         log_error "gradlew文件不存在"
         exit 1
     fi
-    
-    # 确保gradlew有执行权限
     chmod +x ./gradlew
     log_success "Gradle Wrapper准备就绪"
 }
@@ -64,9 +62,8 @@ clean_project() {
 build_debug() {
     log_info "构建Debug版本..."
     ./gradlew assembleDebug
-    
     if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
-        log_success "Debug APK构建成功: app/build/outputs/apk/debug/app-debug.apk"
+        log_success "Debug APK构建成功"
     else
         log_error "Debug APK构建失败"
         exit 1
@@ -77,9 +74,8 @@ build_debug() {
 build_release() {
     log_info "构建Release版本..."
     ./gradlew assembleRelease
-    
     if [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
-        log_success "Release APK构建成功: app/build/outputs/apk/release/app-release-unsigned.apk"
+        log_success "Release APK构建成功"
     else
         log_error "Release APK构建失败"
         exit 1
@@ -112,13 +108,8 @@ show_help() {
     echo "  release     构建Release版本"
     echo "  test        运行单元测试"
     echo "  lint        运行代码检查"
-    echo "  all         执行完整构建流程 (clean + debug + test + lint)"
+    echo "  all         执行完整构建流程"
     echo "  help        显示此帮助信息"
-    echo ""
-    echo "示例:"
-    echo "  $0 debug           # 只构建Debug版本"
-    echo "  $0 all             # 完整构建流程"
-    echo "  $0 clean debug     # 清理后构建Debug版本"
 }
 
 # 完整构建流程
@@ -140,11 +131,9 @@ main() {
         exit 0
     fi
     
-    # 基础环境检查
-    check_java  # 仅显示信息，不强制退出
+    check_java
     check_gradle
     
-    # 处理参数
     for arg in "$@"; do
         case $arg in
             clean)
@@ -181,5 +170,4 @@ main() {
     log_success "构建脚本执行完成！"
 }
 
-# 执行主函数
 main "$@"
