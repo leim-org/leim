@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    
+    <!-- 外圆 -->
+    <path
+        android:fillColor="@color/primary_color"
+        android:pathData="M60,10 A50,50 0 1,1 60,110 A50,50 0 1,1 60,10 Z" />
+    
+    <!-- 内部字母L -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M35,35 L35,85 L75,85 L75,75 L45,75 L45,35 Z" />
+    
+    <!-- 装饰点 -->
+    <circle
+        android:fillColor="@color/accent_color"
+        android:cx="80"
+        android:cy="40"
+        android:r="8" />
+</vector>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/messagesFragment">
+
+    <fragment
+        android:id="@+id/messagesFragment"
+        android:name="cn.lemwood.leim.ui.fragments.MessagesFragment"
+        android:label="消息" />
+
+    <fragment
+        android:id="@+id/contactsFragment"
+        android:name="cn.lemwood.leim.ui.fragments.ContactsFragment"
+        android:label="联系人" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="cn.lemwood.leim.ui.fragments.SettingsFragment"
+        android:label="设置" />
+
+</navigation>
