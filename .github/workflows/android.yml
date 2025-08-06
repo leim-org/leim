@@ -38,8 +38,11 @@ jobs:
     - name: Verify gradle-wrapper.jar
       run: jar tf gradle/wrapper/gradle-wrapper.jar | grep GradleWrapperMain
 
+    - name: Cat gradlew
+      run: cat gradlew
+
     - name: Build with Gradle
-      run: ./gradlew build
+      run: bash -x ./gradlew build
 
     - name: Run tests
       run: ./gradlew test
