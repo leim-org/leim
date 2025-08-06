@@ -39,10 +39,12 @@ jobs:
       run: chmod +x gradlew
 
     - name: List projects
-      run: ./gradlew projects
+      run: ./gradlew -q projects || echo "Projects command not available, continuing build"
+      continue-on-error: true
 
     - name: List tasks
-      run: ./gradlew tasks
+      run: ./gradlew -q tasks || echo "Tasks command not available, continuing build"
+      continue-on-error: true
         
     - name: Build APK
       run: ./gradlew assembleDebug
