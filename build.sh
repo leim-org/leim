@@ -32,7 +32,7 @@ log_error() {
 # 检查Java环境
 check_java() {
     log_info "检查Java环境..."
-    if command -v java &> /dev/null; then
+    if command -v java >/dev/null 2>&1; then
         JAVA_VERSION_OUTPUT=$(java -version 2>&1 | head -n1)
         log_success "Java环境可用: $JAVA_VERSION_OUTPUT"
     else
