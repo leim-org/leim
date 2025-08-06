@@ -41,8 +41,7 @@ jobs:
 
 
     - name: Build APK
-      run: ./gradlew assembleDebug
-      working-directory: ./app
+      run: ./gradlew :app:assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
@@ -84,8 +83,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build Release APK
-      run: ./gradlew assembleRelease
-      working-directory: ./app
+      run: ./gradlew :app:assembleRelease
 
     - name: Upload Release APK
       uses: actions/upload-artifact@v4
