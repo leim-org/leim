@@ -40,8 +40,14 @@ jobs:
 
 
 
+    - name: List projects
+      run: ./gradlew projects
+        
+    - name: List tasks
+      run: ./gradlew tasks
+        
     - name: Build APK
-      run: ./gradlew :app:assembleDebug
+      run: ./gradlew assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
@@ -83,7 +89,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build Release APK
-      run: ./gradlew :app:assembleRelease
+      run: ./gradlew assembleRelease
 
     - name: Upload Release APK
       uses: actions/upload-artifact@v4
