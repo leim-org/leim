@@ -125,6 +125,3 @@ node_modules/
 
 # dotenv environment variables file
 .env
-
-# Trae AI specific
-.trae/
