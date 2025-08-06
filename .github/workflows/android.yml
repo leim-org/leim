@@ -35,6 +35,9 @@ jobs:
     - name: Check wrapper contents
       run: ls -l gradle/wrapper
 
+    - name: Verify gradle-wrapper.jar
+      run: jar tf gradle/wrapper/gradle-wrapper.jar | grep GradleWrapperMain
+
     - name: Build with Gradle
       run: ./gradlew build
 
