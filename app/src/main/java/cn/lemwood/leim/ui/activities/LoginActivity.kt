@@ -41,23 +41,34 @@ class LoginActivity : AppCompatActivity() {
     private fun performLogin() {
         val leimId = binding.editTextLeimId.text.toString().trim()
         val password = binding.editTextPassword.text.toString().trim()
+        val nickname = binding.editTextNickname.text.toString().trim()
         
         if (leimId.isEmpty()) {
-            binding.editTextLeimId.error = "请输入 Leim 号"
+            binding.textInputLayoutLeimId.error = "请输入 Leim 号"
             return
         }
         
         if (password.isEmpty()) {
-            binding.editTextPassword.error = "请输入密码"
+            binding.textInputLayoutPassword.error = "请输入密码"
             return
         }
+        
+        if (nickname.isEmpty()) {
+            binding.textInputLayoutNickname.error = "请输入昵称"
+            return
+        }
+        
+        // 清除之前的错误信息
+        binding.textInputLayoutLeimId.error = null
+        binding.textInputLayoutPassword.error = null
+        binding.textInputLayoutNickname.error = null
         
         // 模拟登录验证（因为后端服务器正在施工）
         if (leimId.length >= 3 && password.length >= 6) {
             // 登录成功
             preferenceManager.setLoggedIn(true)
             preferenceManager.setUserId(leimId)
-            preferenceManager.setUserNickname("用户$leimId")
+            preferenceManager.setUserNickname(nickname)
             
             Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show()
             
