@@ -11,20 +11,14 @@
         android:fillColor="@android:color/white"
         android:pathData="M54,20C35.8,20 21,34.8 21,53c0,6.2 1.7,12 4.6,17L20,85l15.1-5.6C40.1,82.3 46.9,84 54,84c18.2,0 33,-14.8 33,-33S72.2,20 54,20z"/>
     
-    <!-- 内部装饰 -->
-    <circle
+    <!-- 内部装饰圆点 -->
+    <path
         android:fillColor="?attr/colorPrimary"
-        android:cx="42"
-        android:cy="48"
-        android:r="3"/>
-    <circle
+        android:pathData="M42,45a3,3 0,1 1,0 6a3,3 0,1 1,0 -6z"/>
+    <path
         android:fillColor="?attr/colorPrimary"
-        android:cx="54"
-        android:cy="48"
-        android:r="3"/>
-    <circle
+        android:pathData="M54,45a3,3 0,1 1,0 6a3,3 0,1 1,0 -6z"/>
+    <path
         android:fillColor="?attr/colorPrimary"
-        android:cx="66"
-        android:cy="48"
-        android:r="3"/>
+        android:pathData="M66,45a3,3 0,1 1,0 6a3,3 0,1 1,0 -6z"/>
 </vector>
