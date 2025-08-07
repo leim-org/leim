@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import cn.lemwood.leim.databinding.FragmentSettingsBinding
 import cn.lemwood.leim.ui.activities.LoginActivity
+import cn.lemwood.leim.utils.NotificationHelper
 import cn.lemwood.leim.utils.PreferenceManager
 
 /**
@@ -20,6 +21,7 @@ class SettingsFragment : Fragment() {
     private val binding get() = _binding!!
     
     private lateinit var preferenceManager: PreferenceManager
+    private lateinit var notificationHelper: NotificationHelper
     
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +36,7 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         
         preferenceManager = PreferenceManager(requireContext())
+        notificationHelper = NotificationHelper(requireContext())
         
         setupViews()
         loadSettings()
@@ -70,6 +73,11 @@ class SettingsFragment : Fragment() {
             Toast.makeText(context, "编辑个人资料功能正在开发中", Toast.LENGTH_SHORT).show()
         }
         
+        binding.btnTestNotification.setOnClickListener {
+            // 测试通知
+            testNotification()
+        }
+        
         binding.btnAbout.setOnClickListener {
             // 关于页面
             Toast.makeText(context, "Leim v1.0\n一个简单的实时通信应用", Toast.LENGTH_LONG).show()
@@ -88,6 +96,26 @@ class SettingsFragment : Fragment() {
         binding.switchNotification.isChecked = preferenceManager.isNotificationEnabled()
         binding.switchSound.isChecked = preferenceManager.isSoundEnabled()
         binding.switchVibration.isChecked = preferenceManager.isVibrationEnabled()
+    }
+    
+    /**
+     * 测试通知功能
+     */
+    private fun testNotification() {
+        if (!preferenceManager.isNotificationEnabled()) {
+            Toast.makeText(context, "请先开启消息通知", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        // 显示测试通知
+        notificationHelper.showMessageNotification(
+            title = "测试通知",
+            content = "这是一条测试消息，用于验证声音和振动功能是否正常工作。",
+            conversationId = "test",
+            senderId = "system"
+        )
+        
+        Toast.makeText(context, "已发送测试通知", Toast.LENGTH_SHORT).show()
     }
     
     /**

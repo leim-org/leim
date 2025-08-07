@@ -1,20 +1,22 @@
 package cn.lemwood.leim.services
 
 import android.app.Notification
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
-import androidx.core.app.NotificationCompat
 import cn.lemwood.leim.LeimApplication
-import cn.lemwood.leim.R
 import cn.lemwood.leim.data.websocket.LeimWebSocketClient
-import cn.lemwood.leim.ui.activities.MainActivity
-import kotlinx.coroutines.*
+import cn.lemwood.leim.data.websocket.WebSocketListener
+import cn.lemwood.leim.utils.NotificationHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.net.URI
 
@@ -35,6 +37,7 @@ class WebSocketService : Service(), LeimWebSocketClient.WebSocketListener {
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var heartbeatJob: Job? = null
     private var isConnected = false
+    private lateinit var notificationHelper: NotificationHelper
     
     inner class WebSocketBinder : Binder() {
         fun getService(): WebSocketService = this@WebSocketService
@@ -45,7 +48,8 @@ class WebSocketService : Service(), LeimWebSocketClient.WebSocketListener {
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "WebSocket 服务创建")
-        startForeground(NOTIFICATION_ID, createNotification())
+        notificationHelper = NotificationHelper(this)
+        startForeground(NOTIFICATION_ID, notificationHelper.createForegroundNotification())
     }
     
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -155,8 +159,15 @@ class WebSocketService : Service(), LeimWebSocketClient.WebSocketListener {
         // 这里应该保存消息到数据库并发送通知
         val content = json.getString("content")
         val senderId = json.optString("senderId", "unknown")
+        val conversationId = json.optString("conversationId", null)
         
-        showMessageNotification("新消息", content)
+        // 使用新的通知助手显示消息通知
+        notificationHelper.showMessageNotification(
+            title = "新消息",
+            content = content,
+            conversationId = conversationId,
+            senderId = senderId
+        )
     }
     
     /**
@@ -178,7 +189,7 @@ class WebSocketService : Service(), LeimWebSocketClient.WebSocketListener {
      */
     private fun handleSystemMessage(json: JSONObject) {
         val content = json.getString("content")
-        showMessageNotification("系统消息", content)
+        notificationHelper.showSystemNotification("系统消息", content)
     }
     
     /**
@@ -193,42 +204,5 @@ class WebSocketService : Service(), LeimWebSocketClient.WebSocketListener {
         }
     }
     
-    /**
-     * 创建前台服务通知
-     */
-    private fun createNotification(): Notification {
-        val intent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent, PendingIntent.FLAG_IMMUTABLE
-        )
-        
-        return NotificationCompat.Builder(this, LeimApplication.NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("Leim")
-            .setContentText("正在后台运行")
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentIntent(pendingIntent)
-            .setOngoing(true)
-            .build()
-    }
-    
-    /**
-     * 显示消息通知
-     */
-    private fun showMessageNotification(title: String, content: String) {
-        val intent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent, PendingIntent.FLAG_IMMUTABLE
-        )
-        
-        val notification = NotificationCompat.Builder(this, LeimApplication.NOTIFICATION_CHANNEL_ID)
-            .setContentTitle(title)
-            .setContentText(content)
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
-            .build()
-        
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(System.currentTimeMillis().toInt(), notification)
-    }
+
 }
