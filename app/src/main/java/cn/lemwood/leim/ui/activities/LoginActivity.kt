@@ -30,13 +30,8 @@ class LoginActivity : AppCompatActivity() {
      * 设置视图
      */
     private fun setupViews() {
-        binding.btnLogin.setOnClickListener {
+        binding.buttonLogin.setOnClickListener {
             performLogin()
-        }
-        
-        binding.btnRegister.setOnClickListener {
-            // 模拟注册功能
-            Toast.makeText(this, "注册功能正在开发中", Toast.LENGTH_SHORT).show()
         }
     }
     
@@ -44,16 +39,16 @@ class LoginActivity : AppCompatActivity() {
      * 执行登录
      */
     private fun performLogin() {
-        val leimId = binding.etLeimId.text.toString().trim()
-        val password = binding.etPassword.text.toString().trim()
+        val leimId = binding.editTextLeimId.text.toString().trim()
+        val password = binding.editTextPassword.text.toString().trim()
         
         if (leimId.isEmpty()) {
-            binding.etLeimId.error = "请输入 Leim 号"
+            binding.editTextLeimId.error = "请输入 Leim 号"
             return
         }
         
         if (password.isEmpty()) {
-            binding.etPassword.error = "请输入密码"
+            binding.editTextPassword.error = "请输入密码"
             return
         }
         
