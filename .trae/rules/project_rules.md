@@ -65,8 +65,7 @@ cn.lemwood.leim
 ## 技术栈
 - Java/Kotlin
 - websocket
-- markdown(消息支持md格式)
-- taildown css（前端UI）
+- markdown(消息支持md格式
 ## 索要权限
 - 相册
 - 存储空间(保存聊天记录以及文件)

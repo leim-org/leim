@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Leim</string>
+    
+    <!-- 通用 -->
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="loading">加载中…</string>
+    <string name="error">错误</string>
+    <string name="retry">重试</string>
+    
+    <!-- 登录页面 -->
+    <string name="login">登录</string>
+    <string name="leim_id">Leim 号</string>
+    <string name="password">密码</string>
+    <string name="nickname">昵称</string>
+    <string name="login_hint">注意：当前为演示版本\n后端服务器正在施工中\n任意输入信息即可登录</string>
+    
+    <!-- 主页面 -->
+    <string name="message">消息</string>
+    <string name="contact">联系人</string>
+    <string name="settings">设置</string>
+    
+    <!-- 消息页面 -->
+    <string name="no_conversations">暂无会话</string>
+    
+    <!-- 联系人页面 -->
+    <string name="no_contacts">暂无联系人</string>
+    <string name="add_contact">添加联系人</string>
+    
+    <!-- 设置页面 -->
+    <string name="user_profile">个人资料</string>
+    <string name="edit_profile">编辑</string>
+    <string name="app_settings">应用设置</string>
+    <string name="auto_start">开机自启动</string>
+    <string name="notification">消息通知</string>
+    <string name="sound">提示音</string>
+    <string name="vibration">震动</string>
+    <string name="about">关于 Leim</string>
+    <string name="logout">退出登录</string>
+    <string name="logout_success">已退出登录</string>
+    
+    <!-- 通知 -->
+    <string name="notification_channel_name">消息通知</string>
+    <string name="notification_channel_description">接收新消息通知</string>
+    <string name="websocket_service_notification">Leim 正在后台运行</string>
+    <string name="new_message_notification">您有新消息</string>
+    
+    <!-- 权限 -->
+    <string name="permission_storage">存储权限</string>
+    <string name="permission_storage_rationale">需要存储权限来保存聊天记录和文件</string>
+    <string name="permission_notification">通知权限</string>
+    <string name="permission_notification_rationale">需要通知权限来及时提醒您有新消息</string>
+    
+    <!-- 错误信息 -->
+    <string name="error_network">网络连接失败</string>
+    <string name="error_login_failed">登录失败</string>
+    <string name="error_send_message_failed">发送消息失败</string>
+    
+    <!-- WebSocket -->
+    <string name="websocket_connecting">正在连接…</string>
+    <string name="websocket_connected">已连接</string>
+    <string name="websocket_disconnected">连接断开</string>
+    <string name="websocket_error">连接错误</string>
+</resources>
