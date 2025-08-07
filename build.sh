@@ -1,173 +1,117 @@
 #!/bin/bash
 
-# Leim Android项目构建脚本
-# 适用于Linux环境 (Ubuntu/Debian)
+# Leim Android Project Build Script
+#
+# This script provides commands to build, clean, and test the Leim project.
+#
+# Usage:
+#   ./build.sh <command>
+#
+# Commands:
+#   debug       Build the debug version of the application.
+#   release     Build the release version of the application.
+#   clean       Clean the project.
+#   test        Run unit tests.
+#   check       Run lint checks.
+#
 
 set -e
 
-# 颜色定义
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
-
-# 日志函数
-log_info() {
-    printf "${BLUE}[INFO]${NC} %s\n" "$1"
+# Function to print colored messages
+print_message() {
+    color="$1"
+    message="$2"
+    case "$color" in
+        "green") echo -e "\033[0;32m${message}\033[0m" ;;
+        "red") echo -e "\033[0;31m${message}\033[0m" ;;
+        "yellow") echo -e "\033[0;33m${message}\033[0m" ;;
+        *) echo "${message}" ;;
+    esac
 }
 
-log_success() {
-    printf "${GREEN}[SUCCESS]${NC} %s\n" "$1"
-}
-
-log_warning() {
-    printf "${YELLOW}[WARNING]${NC} %s\n" "$1"
-}
-
-log_error() {
-    printf "${RED}[ERROR]${NC} %s\n" "$1"
-}
-
-# 检查Java环境
+# Function to check Java version
 check_java() {
-    log_info "检查Java环境..."
-    if command -v java >/dev/null 2>&1; then
-        JAVA_VERSION_OUTPUT=$(java -version 2>&1 | head -n1)
-        log_success "Java环境可用: $JAVA_VERSION_OUTPUT"
-    else
-        log_warning "未检测到Java，但将继续构建"
-    fi
-}
-
-# 检查Gradle环境
-check_gradle() {
-    log_info "检查Gradle环境..."
-    if [ ! -f "./gradlew" ]; then
-        log_error "gradlew文件不存在"
+    print_message "yellow" "Checking Java version..."
+    if ! command -v java &> /dev/null; then
+        print_message "red" "Java is not installed. Please install Java 17 or higher."
         exit 1
     fi
-    chmod +x ./gradlew
-    log_success "Gradle Wrapper准备就绪"
+    JAVA_VERSION_OUTPUT=$(java -version 2>&1)
+    JAVA_VERSION=$(echo "$JAVA_VERSION_OUTPUT" | awk -F '"' '/version/ {print $2}')
+    MAJOR_VERSION=$(echo "$JAVA_VERSION" | cut -d. -f1)
+    if [ "$MAJOR_VERSION" -lt 17 ]; then
+        print_message "red" "Java version is less than 17. Please upgrade to Java 17 or higher."
+        print_message "yellow" "Current Java version: $JAVA_VERSION"
+        exit 1
+    fi
+    print_message "green" "Java version check passed: $JAVA_VERSION"
 }
 
-# 清理项目
-clean_project() {
-    log_info "清理项目..."
-    sh gradlew clean
-    log_success "项目清理完成"
-}
-
-# 构建Debug版本
+# Function to build the debug version
 build_debug() {
-    log_info "构建Debug版本..."
-    sh gradlew assembleDebug
-    if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
-        log_success "Debug APK构建成功"
-    else
-        log_error "Debug APK构建失败"
-        exit 1
-    fi
+    print_message "yellow" "Building debug version..."
+    check_java
+    ./gradlew assembleDebug
+    print_message "green" "Debug build completed successfully."
 }
 
-# 构建Release版本
+# Function to build the release version
 build_release() {
-    log_info "构建Release版本..."
-    sh gradlew assembleRelease
-    if [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
-        log_success "Release APK构建成功"
-    else
-        log_error "Release APK构建失败"
-        exit 1
-    fi
+    print_message "yellow" "Building release version..."
+    check_java
+    ./gradlew assembleRelease
+    print_message "green" "Release build completed successfully."
 }
 
-# 运行测试
+# Function to clean the project
+clean_project() {
+    print_message "yellow" "Cleaning project..."
+    ./gradlew clean
+    print_message "green" "Project cleaned successfully."
+}
+
+# Function to run unit tests
 run_tests() {
-    log_info "运行单元测试..."
-    sh gradlew test
-    log_success "单元测试完成"
-}
-
-# 检查代码质量
-check_lint() {
-    log_info "运行代码检查..."
-    sh gradlew lint
-    log_success "代码检查完成"
-}
-
-# 显示帮助信息
-show_help() {
-    echo "Leim Android项目构建脚本"
-    echo ""
-    echo "用法: $0 [选项]"
-    echo ""
-    echo "选项:"
-    echo "  clean       清理项目"
-    echo "  debug       构建Debug版本"
-    echo "  release     构建Release版本"
-    echo "  test        运行单元测试"
-    echo "  lint        运行代码检查"
-    echo "  all         执行完整构建流程"
-    echo "  help        显示此帮助信息"
-}
-
-# 完整构建流程
-build_all() {
-    log_info "开始完整构建流程..."
+    print_message "yellow" "Running unit tests..."
     check_java
-    check_gradle
-    clean_project
-    build_debug
-    run_tests
-    check_lint
-    log_success "完整构建流程完成！"
+    ./gradlew test
+    print_message "green" "Unit tests completed successfully."
 }
 
-# 主函数
-main() {
-    if [ $# -eq 0 ]; then
-        show_help
-        exit 0
-    fi
-    
+# Function to run lint checks
+run_lint() {
+    print_message "yellow" "Running lint checks..."
     check_java
-    check_gradle
-    
-    for arg in "$@"; do
-        case $arg in
-            clean)
-                clean_project
-                ;;
-            debug)
-                build_debug
-                ;;
-            release)
-                build_release
-                ;;
-            test)
-                run_tests
-                ;;
-            lint)
-                check_lint
-                ;;
-            all)
-                build_all
-                return
-                ;;
-            help|--help|-h)
-                show_help
-                exit 0
-                ;;
-            *)
-                log_error "未知参数: $arg"
-                show_help
-                exit 1
-                ;;
-        esac
-    done
-    
-    log_success "构建脚本执行完成！"
+    ./gradlew lint
+    print_message "green" "Lint checks completed successfully."
 }
 
-main "$@"
+# Main script logic
+COMMAND="$1"
+
+if [ -z "$COMMAND" ]; then
+    print_message "red" "No command specified. Usage: ./build.sh {debug|release|clean|test|check}"
+    exit 1
+fi
+
+case "$COMMAND" in
+    "debug")
+        build_debug
+        ;;
+    "release")
+        build_release
+        ;;
+    "clean")
+        clean_project
+        ;;
+    "test")
+        run_tests
+        ;;
+    "check")
+        run_lint
+        ;;
+    *)
+        print_message "red" "Unknown command: $COMMAND"
+        exit 1
+        ;;
+esac
