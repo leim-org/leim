@@ -3,6 +3,7 @@ package cn.lemwood.leim.receivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
 import cn.lemwood.leim.services.WebSocketService
 import cn.lemwood.leim.utils.PreferenceManager
@@ -31,7 +32,13 @@ class BootReceiver : BroadcastReceiver() {
                 if (isLoggedIn && autoStartEnabled) {
                     Log.d(TAG, "启动 WebSocket 服务")
                     val serviceIntent = Intent(context, WebSocketService::class.java)
-                    context.startForegroundService(serviceIntent)
+                    
+                    // API 级别兼容性检查
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        context.startForegroundService(serviceIntent)
+                    } else {
+                        context.startService(serviceIntent)
+                    }
                 } else {
                     Log.d(TAG, "用户未登录或未开启自启动，跳过服务启动")
                 }

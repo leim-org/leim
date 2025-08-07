@@ -1,6 +1,7 @@
 package cn.lemwood.leim.ui.activities
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -92,7 +93,13 @@ class MainActivity : AppCompatActivity() {
      */
     private fun startWebSocketService() {
         val serviceIntent = Intent(this, WebSocketService::class.java)
-        startForegroundService(serviceIntent)
+        
+        // API 级别兼容性检查
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
     }
     
     override fun onRequestPermissionsResult(
