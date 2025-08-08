@@ -8,7 +8,6 @@ import android.os.IBinder
 import android.util.Log
 import cn.lemwood.leim.LeimApplication
 import cn.lemwood.leim.data.websocket.LeimWebSocketClient
-import cn.lemwood.leim.data.websocket.WebSocketListener
 import cn.lemwood.leim.utils.NotificationHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
