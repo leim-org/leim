@@ -44,29 +44,42 @@ class UserProfileActivity : AppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityUserProfileBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         
-        preferenceManager = PreferenceManager(this)
-        // 初始化 ViewModel
-        viewModel = ViewModelProvider(this)[UserProfileViewModel::class.java]
-        
-        // 获取传入参数
-        userId = intent.getStringExtra(EXTRA_USER_ID) ?: ""
-        isSelf = intent.getBooleanExtra(EXTRA_IS_SELF, false)
-        
-        if (userId.isEmpty()) {
-            Toast.makeText(this, "用户ID不能为空", Toast.LENGTH_SHORT).show()
+        try {
+            binding = ActivityUserProfileBinding.inflate(layoutInflater)
+            setContentView(binding.root)
+            
+            android.util.Log.d("UserProfileActivity", "onCreate started")
+            
+            preferenceManager = PreferenceManager(this)
+            // 初始化 ViewModel
+            viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[UserProfileViewModel::class.java]
+            
+            // 获取传入参数
+            userId = intent.getStringExtra(EXTRA_USER_ID) ?: ""
+            isSelf = intent.getBooleanExtra(EXTRA_IS_SELF, false)
+            
+            android.util.Log.d("UserProfileActivity", "userId: $userId, isSelf: $isSelf")
+            
+            if (userId.isEmpty()) {
+                Toast.makeText(this, "用户ID不能为空", Toast.LENGTH_SHORT).show()
+                finish()
+                return
+            }
+            
+            setupToolbar()
+            setupViews()
+            setupObservers()
+            
+            // 加载用户信息
+            viewModel.loadUserProfile(userId)
+            
+            android.util.Log.d("UserProfileActivity", "onCreate completed")
+        } catch (e: Exception) {
+            android.util.Log.e("UserProfileActivity", "Error in onCreate", e)
+            Toast.makeText(this, "页面加载失败: ${e.message}", Toast.LENGTH_SHORT).show()
             finish()
-            return
         }
-        
-        setupToolbar()
-        setupViews()
-        setupObservers()
-        
-        // 加载用户信息
-        viewModel.loadUserProfile(userId)
     }
     
     /**

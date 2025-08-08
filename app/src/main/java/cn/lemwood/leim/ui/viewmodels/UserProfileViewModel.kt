@@ -39,13 +39,24 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 _isLoading.value = true
                 _error.value = null
                 
+                // 添加日志
+                android.util.Log.d("UserProfileViewModel", "Loading user profile for userId: $userId")
+                
+                if (userId.isBlank()) {
+                    _error.value = "用户ID不能为空"
+                    return@launch
+                }
+                
                 val user = userRepository.getUserById(userId)
+                android.util.Log.d("UserProfileViewModel", "User found: $user")
+                
                 if (user != null) {
                     _user.value = user
                 } else {
                     _error.value = "用户不存在"
                 }
             } catch (e: Exception) {
+                android.util.Log.e("UserProfileViewModel", "Error loading user profile", e)
                 _error.value = "加载用户信息失败: ${e.message}"
             } finally {
                 _isLoading.value = false
