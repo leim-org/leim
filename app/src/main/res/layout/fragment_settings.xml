@@ -282,6 +282,15 @@
                 android:padding="16dp">
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCrashLogs"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:text="崩溃日志"
+                    android:textAlignment="textStart" />
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAbout"
                     style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="match_parent"

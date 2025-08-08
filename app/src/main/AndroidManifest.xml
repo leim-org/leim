@@ -64,6 +64,10 @@
         <!-- 用户主页活动 -->
         <activity
             android:name=".ui.activities.UserProfileActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.activities.CrashLogActivity"
             android:exported="false"
             android:theme="@style/Theme.Leim" />
         
@@ -86,6 +90,17 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
+        
+        <!-- 文件提供者（用于分享崩溃日志） -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         
     </application>
 

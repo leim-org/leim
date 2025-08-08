@@ -12,6 +12,7 @@ import cn.lemwood.leim.ui.activities.LoginActivity
 import cn.lemwood.leim.utils.AutoStartPermissionHelper
 import cn.lemwood.leim.utils.NotificationHelper
 import cn.lemwood.leim.utils.PreferenceManager
+import cn.lemwood.leim.ui.activities.CrashLogActivity
 
 /**
  * 设置页面 Fragment
@@ -92,6 +93,10 @@ class SettingsFragment : Fragment() {
             testNotification()
         }
         
+        binding.btnCrashLogs.setOnClickListener {
+            showCrashLogsDialog()
+        }
+
         binding.btnAbout.setOnClickListener {
             // 关于页面
             Toast.makeText(context, "Leim v1.0\n一个简单的实时通信应用", Toast.LENGTH_LONG).show()
@@ -195,6 +200,13 @@ class SettingsFragment : Fragment() {
         if (autoStartEnabled && hasPermission) {
             binding.switchAutoStart.isChecked = true
         }
+    }
+    
+    /**
+     * 显示崩溃日志
+     */
+    private fun showCrashLogsDialog() {
+        CrashLogActivity.start(requireContext())
     }
     
     override fun onDestroyView() {
