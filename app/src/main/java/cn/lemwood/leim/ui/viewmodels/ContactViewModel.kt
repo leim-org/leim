@@ -19,8 +19,8 @@ class ContactViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
     
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String> = _error
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> = _errorMessage
     
     private val _searchResults = MutableLiveData<List<User>>()
     val searchResults: LiveData<List<User>> = _searchResults
@@ -42,7 +42,7 @@ class ContactViewModel : ViewModel() {
                 val results = userRepository.searchUsers(query)
                 _searchResults.value = results
             } catch (e: Exception) {
-                _error.value = e.message ?: "搜索失败"
+                _errorMessage.value = "搜索失败: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -58,7 +58,7 @@ class ContactViewModel : ViewModel() {
                 val updatedUser = user.copy(isContact = true)
                 userRepository.updateUser(updatedUser)
             } catch (e: Exception) {
-                _error.value = e.message ?: "添加联系人失败"
+                _errorMessage.value = "添加联系人失败: ${e.message}"
             }
         }
     }
@@ -72,7 +72,7 @@ class ContactViewModel : ViewModel() {
                 val updatedUser = user.copy(isContact = false)
                 userRepository.updateUser(updatedUser)
             } catch (e: Exception) {
-                _error.value = e.message ?: "删除联系人失败"
+                _errorMessage.value = "删除联系人失败: ${e.message}"
             }
         }
     }
@@ -83,9 +83,12 @@ class ContactViewModel : ViewModel() {
     fun addMockContacts() {
         viewModelScope.launch {
             try {
+                _isLoading.value = true
                 userRepository.addMockContacts()
             } catch (e: Exception) {
-                _error.value = e.message ?: "添加模拟联系人失败"
+                _errorMessage.value = "添加模拟联系人失败: ${e.message}"
+            } finally {
+                _isLoading.value = false
             }
         }
     }

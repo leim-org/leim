@@ -41,27 +41,19 @@ class ContactAdapter(
                 when (user.status) {
                     "online" -> {
                         textViewStatus.text = "在线"
-                        textViewStatus.setTextColor(
-                            itemView.context.getColor(android.R.color.holo_green_dark)
-                        )
+                        textViewStatus.setTextColor(0xFF4CAF50.toInt()) // 绿色
                     }
                     "offline" -> {
                         textViewStatus.text = "离线"
-                        textViewStatus.setTextColor(
-                            itemView.context.getColor(android.R.color.darker_gray)
-                        )
+                        textViewStatus.setTextColor(0xFF757575.toInt()) // 灰色
                     }
-                    "away" -> {
-                        textViewStatus.text = "离开"
-                        textViewStatus.setTextColor(
-                            itemView.context.getColor(android.R.color.holo_orange_dark)
-                        )
+                    "away", "busy" -> {
+                        textViewStatus.text = if (user.status == "away") "离开" else "忙碌"
+                        textViewStatus.setTextColor(0xFFFF9800.toInt()) // 橙色
                     }
                     else -> {
                         textViewStatus.text = "未知"
-                        textViewStatus.setTextColor(
-                            itemView.context.getColor(android.R.color.darker_gray)
-                        )
+                        textViewStatus.setTextColor(0xFF757575.toInt()) // 灰色
                     }
                 }
                 
