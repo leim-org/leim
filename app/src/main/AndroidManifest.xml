@@ -61,6 +61,12 @@
             </intent-filter>
         </activity>
         
+        <!-- 用户主页活动 -->
+        <activity
+            android:name=".ui.activities.UserProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Leim" />
+        
         <!-- WebSocket 服务 -->
         <service
             android:name=".services.WebSocketService"

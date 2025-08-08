@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.lemwood.leim.databinding.FragmentContactBinding
+import cn.lemwood.leim.ui.activities.UserProfileActivity
 import cn.lemwood.leim.ui.adapters.ContactAdapter
 import cn.lemwood.leim.ui.viewmodels.ContactViewModel
 
@@ -49,8 +50,8 @@ class ContactFragment : Fragment() {
      */
     private fun setupRecyclerView() {
         contactAdapter = ContactAdapter { user ->
-            // 点击联系人，可以发起聊天或查看详情
-            // TODO: 实现联系人详情或聊天功能
+            // 点击联系人，打开用户主页
+            UserProfileActivity.start(requireContext(), user.leimId, false)
         }
         
         binding.recyclerViewContacts.apply {

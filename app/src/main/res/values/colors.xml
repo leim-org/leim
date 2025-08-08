@@ -66,4 +66,13 @@
     <color name="md_theme_dark_surfaceTint">#D0BCFF</color>
     <color name="md_theme_dark_outlineVariant">#49454F</color>
     <color name="md_theme_dark_scrim">#000000</color>
+    
+    <!-- 状态颜色 -->
+    <color name="status_online">#4CAF50</color>
+    <color name="status_offline">#9E9E9E</color>
+    <color name="status_busy">#FF9800</color>
+    
+    <!-- 按钮颜色 -->
+    <color name="button_primary">#6750A4</color>
+    <color name="button_danger">#F44336</color>
 </resources>
