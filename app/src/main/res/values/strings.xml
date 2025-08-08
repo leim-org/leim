@@ -70,7 +70,6 @@
     <string name="last_seen">最后在线：%s</string>
     <string name="joined_time">加入时间：%s</string>
     <string name="send_message">发送消息</string>
-    <string name="add_contact">添加联系人</string>
     <string name="remove_contact">删除联系人</string>
     <string name="contact_added">已添加联系人</string>
     <string name="contact_removed">已删除联系人</string>
