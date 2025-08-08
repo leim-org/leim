@@ -11,7 +11,6 @@ import android.os.Build
 import cn.lemwood.leim.data.database.LeimDatabase
 import cn.lemwood.leim.data.repository.MessageRepository
 import cn.lemwood.leim.data.repository.UserRepository
-import cn.lemwood.leim.utils.CrashLogger
 
 /**
  * Leim 应用程序类
@@ -40,9 +39,6 @@ class LeimApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        
-        // 初始化异常日志捕获器
-        CrashLogger.init(this)
         
         // 创建通知渠道
         createNotificationChannel()
