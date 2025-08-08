@@ -39,7 +39,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 _isLoading.value = true
                 _error.value = null
                 
-                val user = userRepository.getUserByLeimId(userId)
+                val user = userRepository.getUserById(userId)
                 if (user != null) {
                     _user.value = user
                 } else {
