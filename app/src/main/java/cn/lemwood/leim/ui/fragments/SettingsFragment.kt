@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import cn.lemwood.leim.databinding.FragmentSettingsBinding
 import cn.lemwood.leim.ui.activities.LoginActivity
+import cn.lemwood.leim.utils.AutoStartPermissionHelper
 import cn.lemwood.leim.utils.NotificationHelper
 import cn.lemwood.leim.utils.PreferenceManager
 
@@ -22,6 +23,7 @@ class SettingsFragment : Fragment() {
     
     private lateinit var preferenceManager: PreferenceManager
     private lateinit var notificationHelper: NotificationHelper
+    private lateinit var autoStartHelper: AutoStartPermissionHelper
     
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +39,7 @@ class SettingsFragment : Fragment() {
         
         preferenceManager = PreferenceManager(requireContext())
         notificationHelper = NotificationHelper(requireContext())
+        autoStartHelper = AutoStartPermissionHelper(requireContext())
         
         setupViews()
         loadSettings()
@@ -52,7 +55,18 @@ class SettingsFragment : Fragment() {
         
         // 设置开关监听器
         binding.switchAutoStart.setOnCheckedChangeListener { _, isChecked ->
-            preferenceManager.setAutoStartEnabled(isChecked)
+            if (isChecked) {
+                // 开启自启动时检查权限
+                if (autoStartHelper.isAutoStartPermissionRequired()) {
+                    // 需要申请权限，先关闭开关
+                    binding.switchAutoStart.isChecked = false
+                    autoStartHelper.showAutoStartPermissionDialog()
+                } else {
+                    preferenceManager.setAutoStartEnabled(true)
+                }
+            } else {
+                preferenceManager.setAutoStartEnabled(false)
+            }
         }
         
         binding.switchNotification.setOnCheckedChangeListener { _, isChecked ->
@@ -86,13 +100,36 @@ class SettingsFragment : Fragment() {
         binding.btnLogout.setOnClickListener {
             performLogout()
         }
+        
+        binding.btnRequestAutoStartPermission.setOnClickListener {
+            // 申请自启动权限
+            autoStartHelper.showAutoStartPermissionDialog()
+        }
     }
     
     /**
      * 加载设置
      */
     private fun loadSettings() {
-        binding.switchAutoStart.isChecked = preferenceManager.isAutoStartEnabled()
+        // 检查自启动权限状态
+        val autoStartEnabled = preferenceManager.isAutoStartEnabled()
+        val hasPermission = !autoStartHelper.isAutoStartPermissionRequired()
+        
+        // 控制权限申请按钮的显示
+        if (!hasPermission) {
+            binding.layoutAutoStartPermission.visibility = View.VISIBLE
+        } else {
+            binding.layoutAutoStartPermission.visibility = View.GONE
+        }
+        
+        // 如果用户开启了自启动但没有权限，显示提示
+        if (autoStartEnabled && !hasPermission) {
+            binding.switchAutoStart.isChecked = false
+            Toast.makeText(context, "请先授予自启动权限", Toast.LENGTH_SHORT).show()
+        } else {
+            binding.switchAutoStart.isChecked = autoStartEnabled && hasPermission
+        }
+        
         binding.switchNotification.isChecked = preferenceManager.isNotificationEnabled()
         binding.switchSound.isChecked = preferenceManager.isSoundEnabled()
         binding.switchVibration.isChecked = preferenceManager.isVibrationEnabled()
@@ -132,6 +169,32 @@ class SettingsFragment : Fragment() {
         startActivity(intent)
         
         requireActivity().finish()
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        // 重新检查权限状态，用户可能从设置页面返回
+        updateAutoStartStatus()
+    }
+    
+    /**
+     * 更新自启动状态
+     */
+    private fun updateAutoStartStatus() {
+        val autoStartEnabled = preferenceManager.isAutoStartEnabled()
+        val hasPermission = !autoStartHelper.isAutoStartPermissionRequired()
+        
+        // 控制权限申请按钮的显示
+        if (!hasPermission) {
+            binding.layoutAutoStartPermission.visibility = View.VISIBLE
+        } else {
+            binding.layoutAutoStartPermission.visibility = View.GONE
+        }
+        
+        // 如果用户已经授予权限且之前开启了自启动，则更新开关状态
+        if (autoStartEnabled && hasPermission) {
+            binding.switchAutoStart.isChecked = true
+        }
     }
     
     override fun onDestroyView() {
