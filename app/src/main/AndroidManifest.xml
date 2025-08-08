@@ -66,6 +66,12 @@
             android:name=".ui.activities.UserProfileActivity"
             android:exported="false" />
 
+        <!-- 测试活动 -->
+        <activity
+            android:name=".ui.activities.TestActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Leim" />
+
         <activity
             android:name=".ui.activities.CrashLogActivity"
             android:exported="false"
