@@ -5,8 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.lemwood.leim.R
 import cn.lemwood.leim.databinding.ActivityCrashLogBinding
@@ -32,43 +34,68 @@ class CrashLogActivity : AppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityCrashLogBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         
-        setupToolbar()
-        setupRecyclerView()
-        loadCrashLogs()
+        try {
+            binding = ActivityCrashLogBinding.inflate(layoutInflater)
+            setContentView(binding.root)
+            
+            setupToolbar()
+            setupRecyclerView()
+            loadCrashLogs()
+        } catch (e: Exception) {
+            android.util.Log.e("CrashLogActivity", "Error in onCreate", e)
+            // 如果出现异常，显示错误信息并关闭Activity
+            Toast.makeText(this, "加载崩溃日志失败: ${e.message}", Toast.LENGTH_LONG).show()
+            finish()
+        }
     }
     
     private fun setupToolbar() {
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            title = "崩溃日志"
+        try {
+            setSupportActionBar(binding.toolbar)
+            supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
+                title = "崩溃日志"
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("CrashLogActivity", "Error in setupToolbar", e)
         }
     }
     
     private fun setupRecyclerView() {
-        adapter = CrashLogAdapter { logInfo ->
-            showLogDetail(logInfo)
-        }
-        
-        binding.recyclerView.apply {
-            layoutManager = LinearLayoutManager(this@CrashLogActivity)
-            adapter = this@CrashLogActivity.adapter
+        try {
+            adapter = CrashLogAdapter { logInfo ->
+                showLogDetail(logInfo)
+            }
+            
+            binding.recyclerView.apply {
+                layoutManager = LinearLayoutManager(this@CrashLogActivity)
+                adapter = this@CrashLogActivity.adapter
+                addItemDecoration(DividerItemDecoration(this@CrashLogActivity, DividerItemDecoration.VERTICAL))
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("CrashLogActivity", "Error in setupRecyclerView", e)
         }
     }
     
     private fun loadCrashLogs() {
-        val logs = CrashLogManager.getCrashLogInfoList(this)
-        adapter.submitList(logs)
-        
-        if (logs.isEmpty()) {
-            binding.emptyView.visibility = android.view.View.VISIBLE
-            binding.recyclerView.visibility = android.view.View.GONE
-        } else {
-            binding.emptyView.visibility = android.view.View.GONE
-            binding.recyclerView.visibility = android.view.View.VISIBLE
+        try {
+            val logs = CrashLogManager.getCrashLogInfoList(this)
+            adapter.submitList(logs)
+            
+            // 显示或隐藏空状态
+            if (logs.isEmpty()) {
+                binding.recyclerView.visibility = View.GONE
+                binding.emptyView.visibility = View.VISIBLE
+            } else {
+                binding.recyclerView.visibility = View.VISIBLE
+                binding.emptyView.visibility = View.GONE
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("CrashLogActivity", "Error in loadCrashLogs", e)
+            // 如果加载失败，显示空状态
+            binding.recyclerView.visibility = View.GONE
+            binding.emptyView.visibility = View.VISIBLE
         }
     }
     
