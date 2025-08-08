@@ -38,13 +38,27 @@ class CrashLogAdapter(
         
         fun bind(logInfo: CrashLogManager.CrashLogInfo) {
             binding.apply {
-                textTime.text = dateFormat.format(Date(logInfo.timestamp))
-                textSize.text = formatFileSize(logInfo.size)
-                textException.text = logInfo.exceptionType
+                textTime.text = logInfo.formattedDate
+                textSize.text = logInfo.formattedSize
+                textException.text = getExceptionTypeFromFileName(logInfo.fileName)
                 
                 root.setOnClickListener {
                     onItemClick(logInfo)
                 }
+            }
+        }
+        
+        private fun getExceptionTypeFromFileName(fileName: String): String {
+            // 从文件名中提取异常类型，格式通常是 crash_yyyyMMdd_HHmmss_ExceptionType.log
+            return try {
+                val parts = fileName.split("_")
+                if (parts.size >= 4) {
+                    parts[3].replace(".log", "")
+                } else {
+                    "Unknown"
+                }
+            } catch (e: Exception) {
+                "Unknown"
             }
         }
         

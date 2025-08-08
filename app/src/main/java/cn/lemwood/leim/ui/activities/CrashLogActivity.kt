@@ -13,6 +13,7 @@ import cn.lemwood.leim.databinding.ActivityCrashLogBinding
 import cn.lemwood.leim.ui.adapters.CrashLogAdapter
 import cn.lemwood.leim.utils.CrashLogManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.io.File
 
 /**
  * 崩溃日志查看Activity
@@ -20,7 +21,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 class CrashLogActivity : AppCompatActivity() {
     
     private lateinit var binding: ActivityCrashLogBinding
-    private lateinit var crashLogManager: CrashLogManager
     private lateinit var adapter: CrashLogAdapter
     
     companion object {
@@ -49,7 +49,6 @@ class CrashLogActivity : AppCompatActivity() {
     }
     
     private fun setupRecyclerView() {
-        crashLogManager = CrashLogManager(this)
         adapter = CrashLogAdapter { logInfo ->
             showLogDetail(logInfo)
         }
@@ -61,7 +60,7 @@ class CrashLogActivity : AppCompatActivity() {
     }
     
     private fun loadCrashLogs() {
-        val logs = crashLogManager.getCrashLogInfos()
+        val logs = CrashLogManager.getCrashLogInfoList(this)
         adapter.submitList(logs)
         
         if (logs.isEmpty()) {
@@ -74,27 +73,27 @@ class CrashLogActivity : AppCompatActivity() {
     }
     
     private fun showLogDetail(logInfo: CrashLogManager.CrashLogInfo) {
-        val content = crashLogManager.readCrashLog(logInfo.fileName)
+        val content = CrashLogManager.readCrashLog(logInfo.file)
         
         MaterialAlertDialogBuilder(this)
             .setTitle("崩溃详情")
             .setMessage(content)
             .setPositiveButton("确定", null)
             .setNeutralButton("分享") { _, _ ->
-                crashLogManager.shareCrashLog(this, logInfo.fileName)
+                CrashLogManager.shareCrashLog(this, logInfo.file)
             }
             .setNegativeButton("删除") { _, _ ->
-                deleteCrashLog(logInfo.fileName)
+                deleteCrashLog(logInfo.file)
             }
             .show()
     }
     
-    private fun deleteCrashLog(fileName: String) {
+    private fun deleteCrashLog(file: File) {
         MaterialAlertDialogBuilder(this)
             .setTitle("删除日志")
             .setMessage("确定要删除这个崩溃日志吗？")
             .setPositiveButton("删除") { _, _ ->
-                crashLogManager.deleteCrashLog(fileName)
+                CrashLogManager.deleteCrashLog(file)
                 loadCrashLogs()
                 Toast.makeText(this, "已删除", Toast.LENGTH_SHORT).show()
             }
@@ -126,7 +125,7 @@ class CrashLogActivity : AppCompatActivity() {
             .setTitle("清除所有日志")
             .setMessage("确定要清除所有崩溃日志吗？")
             .setPositiveButton("清除") { _, _ ->
-                crashLogManager.clearCrashLogs()
+                CrashLogManager.clearAllCrashLogs(this)
                 loadCrashLogs()
                 Toast.makeText(this, "已清除所有日志", Toast.LENGTH_SHORT).show()
             }
