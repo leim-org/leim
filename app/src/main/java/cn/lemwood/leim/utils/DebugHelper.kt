@@ -34,11 +34,13 @@ object DebugHelper {
             status.append("权限状态: $hasAllPermissions\n")
             
             // 检查崩溃日志
-            val crashLogs = CrashLogManager.getCrashLogs(context)
-            status.append("崩溃日志数量: ${crashLogs.size}\n")
-            
-            if (crashLogs.isNotEmpty()) {
-                status.append("最新崩溃: ${crashLogs.first().timestamp}\n")
+            val crashLogCount = CrashLogManager.getCrashLogCount(context)
+            if (crashLogCount > 0) {
+                val logs = CrashLogManager.getCrashLogInfoList(context)
+                status.append("崩溃日志数量: $crashLogCount\n")
+                status.append("最新日志: ${logs.firstOrNull()?.formattedDate ?: "无"}\n")
+            } else {
+                status.append("崩溃日志: 无\n")
             }
             
             status.append("=== 检查完成 ===\n")
@@ -65,7 +67,7 @@ object DebugHelper {
             preferenceManager.setUserNickname("")
             
             // 清除崩溃日志
-            CrashLogManager.clearAllLogs(context)
+            CrashLogManager.clearAllCrashLogs(context)
             
             Log.d(TAG, "数据清除完成")
         } catch (e: Exception) {
