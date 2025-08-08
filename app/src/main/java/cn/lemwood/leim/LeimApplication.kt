@@ -4,6 +4,9 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.media.AudioAttributes
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import cn.lemwood.leim.data.database.LeimDatabase
 import cn.lemwood.leim.data.repository.MessageRepository
@@ -48,6 +51,9 @@ class LeimApplication : Application() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             
+            // 获取默认通知声音
+            val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            
             // 消息通知渠道
             val messageChannel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
@@ -58,6 +64,15 @@ class LeimApplication : Application() {
                 enableVibration(true)
                 enableLights(true)
                 setShowBadge(true)
+                
+                // 设置声音
+                setSound(defaultSoundUri, AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_INSTANT)
+                    .build())
+                
+                // 设置振动模式
+                vibrationPattern = longArrayOf(0, 300, 200, 300)
             }
             
             // 系统通知渠道
@@ -70,6 +85,7 @@ class LeimApplication : Application() {
                 enableVibration(false)
                 enableLights(false)
                 setShowBadge(false)
+                setSound(null, null) // 系统通知静音
             }
             
             // 服务通知渠道（前台服务）
@@ -82,6 +98,7 @@ class LeimApplication : Application() {
                 enableVibration(false)
                 enableLights(false)
                 setShowBadge(false)
+                setSound(null, null) // 服务通知静音
             }
             
             notificationManager.createNotificationChannels(listOf(

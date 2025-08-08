@@ -80,19 +80,23 @@ class NotificationHelper(private val context: Context) {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
         
-        // 设置声音
-        if (preferenceManager.isSoundEnabled()) {
-            val soundUri = getNotificationSoundUri()
-            notificationBuilder.setSound(soundUri)
-        } else {
-            notificationBuilder.setSound(null)
+        // 设置声音（仅在 Android 8.0 以下版本设置，8.0+ 由通知渠道控制）
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            if (preferenceManager.isSoundEnabled()) {
+                val soundUri = getNotificationSoundUri()
+                notificationBuilder.setSound(soundUri)
+            } else {
+                notificationBuilder.setSound(null)
+            }
         }
         
-        // 设置振动
-        if (preferenceManager.isVibrationEnabled()) {
-            notificationBuilder.setVibrate(VIBRATION_PATTERN)
-        } else {
-            notificationBuilder.setVibrate(null)
+        // 设置振动（仅在 Android 8.0 以下版本设置，8.0+ 由通知渠道控制）
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            if (preferenceManager.isVibrationEnabled()) {
+                notificationBuilder.setVibrate(VIBRATION_PATTERN)
+            } else {
+                notificationBuilder.setVibrate(null)
+            }
         }
         
         val notification = notificationBuilder.build()
@@ -221,5 +225,44 @@ class NotificationHelper(private val context: Context) {
      */
     fun cancelNotification(notificationId: Int) {
         notificationManager.cancel(notificationId)
+    }
+    
+    /**
+     * 更新通知渠道设置（Android 8.0+）
+     * 注意：Android 8.0+ 系统中，用户可能需要手动在系统设置中调整通知渠道设置
+     */
+    fun updateNotificationChannelSettings() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = notificationManager.getNotificationChannel(LeimApplication.NOTIFICATION_CHANNEL_ID)
+            channel?.let {
+                // 在 Android 8.0+ 中，通知渠道设置主要由系统控制
+                // 用户需要在系统设置中手动调整声音和振动
+                // 这里我们可以提供一个跳转到系统设置的方法
+            }
+        }
+    }
+    
+    /**
+     * 检查通知渠道是否启用了声音
+     */
+    fun isChannelSoundEnabled(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = notificationManager.getNotificationChannel(LeimApplication.NOTIFICATION_CHANNEL_ID)
+            channel?.sound != null
+        } else {
+            preferenceManager.isSoundEnabled()
+        }
+    }
+    
+    /**
+     * 检查通知渠道是否启用了振动
+     */
+    fun isChannelVibrationEnabled(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = notificationManager.getNotificationChannel(LeimApplication.NOTIFICATION_CHANNEL_ID)
+            channel?.shouldVibrate() == true
+        } else {
+            preferenceManager.isVibrationEnabled()
+        }
     }
 }
